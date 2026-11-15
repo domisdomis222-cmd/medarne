@@ -34,6 +34,19 @@
     .nav a { text-decoration: none; }
     .nav a:hover { color: var(--ink); }
     .nav .nav-cta { color: var(--ink); border: 1px solid #aab9ad; padding: 12px 17px; border-radius: 3px; }
+    .nav .login-trigger { color: white; background: var(--green); border-color: var(--green); }
+    .nav .login-trigger:hover { color: white; background: #24483a; }
+    .login-preview { display: none; position: fixed; inset: 0; z-index: 10; place-items: center; padding: 24px; background: #10251dcc; }
+    .login-preview:target { display: grid; }
+    .login-card { position: relative; width: min(100%, 430px); padding: 38px; background: var(--paper); border: 1px solid var(--line); box-shadow: 0 24px 70px #10251d44; }
+    .login-close { position: absolute; top: 13px; right: 17px; color: var(--muted); text-decoration: none; font-size: 25px; line-height: 1; }
+    .login-card h2 { margin: 16px 0 9px; font: 38px/1.1 var(--serif); letter-spacing: -1px; }
+    .login-card > p { margin: 0 0 24px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .login-field { margin-top: 16px; }
+    .login-field label { display: block; margin-bottom: 7px; color: var(--ink); font-size: 12px; }
+    .login-field input { width: 100%; min-height: 45px; padding: 13px 12px; background: var(--white); border: 1px solid var(--line); color: var(--ink); font: inherit; font-size: 13px; }
+    .login-submit { width: 100%; min-height: 47px; margin-top: 22px; border: 0; border-radius: 2px; background: var(--green); color: white; font: inherit; font-size: 13px; cursor: not-allowed; opacity: .65; }
+    .login-notice { margin-top: 17px; padding: 12px 14px; background: var(--mint); color: var(--muted); font-size: 11px; line-height: 1.6; }
     .hero { min-height: 610px; display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 64px; padding-block: 75px 82px; }
     .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--green); text-transform: uppercase; letter-spacing: 1.6px; font-size: 10px; font-weight: 700; background: var(--mint); border: 1px solid #cfdccf; padding: 8px 14px 8px 12px; border-radius: 999px; }
     .eyebrow::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--sun); box-shadow: 0 0 0 3px #e8c87333; animation: pulse 2.2s infinite; }
@@ -132,10 +145,23 @@
     <a class="brand" href="#pradzia" aria-label="Medarnė — į pradžią"><span class="brand-mark" aria-hidden="true">m</span>medarnė</a>
     <nav class="nav" aria-label="Pagrindinė navigacija">
       <a href="#kryptis">Mūsų kryptis</a>
+      <a class="nav-cta login-trigger" href="#prisijungimo-maketas">Prisijungti</a>
       <a href="#atsakingumas">Atsakingumas</a>
       <a class="nav-cta" href="#apie">Apie projektą <span aria-hidden="true"> ↗</span></a>
     </nav>
   </header>
+  <div class="login-preview" id="prisijungimo-maketas" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <section class="login-card">
+      <a class="login-close" href="#" aria-label="Uždaryti prisijungimo langą">×</a>
+      <span class="eyebrow">Medarnės paskyra</span>
+      <h2 id="login-title">Prisijungti</h2>
+      <p>Prisijungimo lango peržiūra. Tikra paskyros sistema dar nesukurta.</p>
+      <div class="login-field"><label for="login-identity">El. paštas arba vartotojo vardas</label><input id="login-identity" type="text" autocomplete="username" placeholder="Įveskite el. paštą arba vartotojo vardą"></div>
+      <div class="login-field"><label for="login-password">Slaptažodis</label><input id="login-password" type="password" autocomplete="current-password" placeholder="Įveskite slaptažodį"></div>
+      <button class="login-submit" type="button" disabled>Prisijungti</button>
+      <div class="login-notice">Tai tik dizaino maketas — įvesti duomenys nėra siunčiami ir neišsaugomi.</div>
+    </section>
+  </div>
   <main>
     <section class="shell hero" id="pradzia" aria-labelledby="hero-title">
       <div>
