@@ -61,6 +61,7 @@
       font-weight: 600;
     }
     .nav { display: flex; align-items: center; gap: 28px; font-size: 13px; color: var(--muted); }
+    .brand-mark svg, .note-symbol svg { display: block; width: 100%; height: 100%; overflow: visible; }
     .nav a { text-decoration: none; }
     .nav a:hover { color: var(--ink); }
     .nav .nav-cta {
@@ -193,7 +194,7 @@
     .footer { padding-block: 25px; }
     .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 10px; }
     .footer .brand { color: var(--ink); font-size: 20px; }
-    .footer .brand-mark { width: 26px; height: 26px; font-size: 13px; }
+    .footer .brand-mark { width: 26px; height: 26px; }
     .footer-note { max-width: 430px; text-align: right; line-height: 1.6; }
 
     @media (max-width: 760px) {
@@ -228,7 +229,7 @@
 </head>
 <body>
   <header class="shell topbar">
-    <a class="brand" href="#pradzia" aria-label="Medarnė — į pradžią"><span class="brand-mark" aria-hidden="true">m</span>medarnė</a>
+    <a class="brand" href="#pradzia" aria-label="Medarnė — į pradžią"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="17.5" stroke="currentColor" stroke-width="1.4"/><path d="M11.5 24.8c7.3-.1 13-4.8 16.4-13.1 2.9 9.1-.1 18.4-8.2 20-4.4.9-7.7-2.1-8.2-6.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 28.2c4.1-4.8 8.1-8.2 13.7-12" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="29.6" cy="9.8" r="2.2" fill="#E8C873"/></svg></span>medarnė</a>
     <nav class="nav" aria-label="Pagrindinė navigacija">
       <a href="#kryptis">Mūsų kryptis</a>
       <a href="#atsakingumas">Atsakingumas</a>
@@ -262,7 +263,7 @@
       <div class="visual" aria-label="Medarnės kryptys: aiškumas, rūpestis ir atsakingas požiūris">
         <div class="orbit" aria-hidden="true"><span class="orb-dot"></span></div>
         <article class="note-card">
-          <div class="note-top"><span>Medarnės kryptis</span><span class="note-symbol" aria-hidden="true">m</span></div>
+          <div class="note-top"><span>Medarnės kryptis</span><span class="note-symbol" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.7"/><path d="M11.5 24.8c7.3-.1 13-4.8 16.4-13.1 2.9 9.1-.1 18.4-8.2 20-4.4.9-7.7-2.1-8.2-6.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 28.2c4.1-4.8 8.1-8.2 13.7-12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="29.6" cy="9.8" r="2.5" fill="#E8C873"/></svg></span></div>
           <h2>Mažiau painiavos.<br>Daugiau aiškumo.</h2>
           <p>Pradėti rūpintis savimi kartais užtenka nuo paprasto, aiškaus atsakymo.</p>
           <div class="note-rule" aria-hidden="true"></div>
@@ -283,12 +284,13 @@
     <section class="shell section" id="kryptis" aria-labelledby="direction-title">
       <div class="section-grid">
         <div>
-          <span class="eyebrow">Kodėl kuriame</span>
-          <h2 id="direction-title">Medicininę informaciją pateikti suprantamiau.</h2>
+          <span class="eyebrow">Mūsų tikslas</span>
+          <h2 id="direction-title">Padėti žmonėms geriau suprasti sveikatos informaciją.</h2>
         </div>
         <div class="section-body">
-          <p>Apie sveikatą dažnai ieškome informacijos tada, kai jau turime klausimų ar nerimaujame. Tačiau rasti patikimą ir lengvai suprantamą atsakymą ne visada paprasta. Medarnė gimsta iš noro šį procesą palengvinti.</p>
-          <p>Technologijos gali padėti, bet svarbiausia mums – žmogus, kuris ieško informacijos. Projektas dar kuriamas, todėl jo funkcijas ir galimybes vis dar apgalvojame.</p>
+          <p>Apie sveikatą dažnai ieškome informacijos tada, kai kyla klausimų ar nerimo. Tačiau patikimą ir lengvai suprantamą atsakymą rasti ne visada paprasta. Medarnę kuriame siekdami, kad medicininė informacija būtų aiškesnė, nuoseklesnė ir žmogui suprantamesnė.</p>
+          <p>Projekte numatoma pasitelkti dirbtinį intelektą medicininei informacijai pateikti ir apdoroti. DI būtų pagalbinė priemonė, o ne savarankiškas sprendimų priėmėjas. Jo pateikta informacija gali būti netiksli, todėl ji neturi būti laikoma diagnoze, gydymo nurodymu ar gydytojo konsultacijos pakaitalu.</p>
+          <p>Medarnė dar kuriama. Ši kryptis nusako, ko siekiame, bet nėra jau veikiančių ar galutinai patvirtintų funkcijų sąrašas. Konkrečios galimybės ir DI vaidmuo dar tikslinami, ypatingą dėmesį skiriant žmogaus naudai, medicininiam atidumui, saugumui ir privatumui.</p>
         </div>
       </div>
     </section>
@@ -320,7 +322,7 @@
   </main>
   <footer class="shell footer">
     <div class="footer-inner">
-      <a class="brand" href="#pradzia"><span class="brand-mark" aria-hidden="true">m</span>medarnė</a>
+      <a class="brand" href="#pradzia"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="17.5" stroke="currentColor" stroke-width="1.4"/><path d="M11.5 24.8c7.3-.1 13-4.8 16.4-13.1 2.9 9.1-.1 18.4-8.2 20-4.4.9-7.7-2.1-8.2-6.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 28.2c4.1-4.8 8.1-8.2 13.7-12" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="29.6" cy="9.8" r="2.2" fill="#E8C873"/></svg></span>medarnė</a>
       <span class="footer-note">Informacinis puslapis apie kuriamą projektą. Medarnė neteikia medicininės konsultacijos ar diagnozės.</span>
       <span>© Medarnė</span>
     </div>
