@@ -307,58 +307,31 @@
       *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
     .nav-pages { flex-wrap: wrap; gap: 10px clamp(16px, 2.1vw, 35px); }
-    .recommendation-trigger {
-      min-height: 44px;
-      border: 0;
-      padding: 0;
-      background: transparent;
-      color: var(--navy);
-      cursor: pointer;
-      font: inherit;
-    }
-    .recommendation-trigger:hover { color: var(--teal); }
-    .recommendation-dialog {
-      width: min(680px, calc(100% - 28px));
-      max-height: calc(100dvh - 28px);
-      padding: 0;
+    .health-summary {
+      margin-block: 18px;
+      padding: 16px;
       border: 1px solid var(--line);
-      border-radius: 22px;
-      color: var(--ink);
-      background: var(--white);
-      box-shadow: 0 24px 70px #0a30492e;
+      border-radius: 16px;
+      background: var(--paper);
     }
-    .recommendation-dialog::backdrop { background: #0a3049a6; }
-    .recommendation-inner { position: relative; padding: clamp(22px, 5vw, 38px); }
-    .recommendation-inner h2 { margin: 12px 0 8px; font-size: clamp(28px, 5vw, 38px); letter-spacing: -.03em; }
-    .recommendation-close {
-      width: 40px; height: 40px; padding: 0; border: 0; border-radius: 8px;
-      background: transparent; cursor: pointer;
+    .health-summary h3 { margin: 5px 0 8px; color: var(--navy); font-size: 22px; }
+    .health-summary p, .health-summary details { margin: 8px 0 0; font-size: 13px; line-height: 1.5; }
+    .health-summary details > p { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .health-summary summary { color: var(--teal); cursor: pointer; }
+    .health-bubbles { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; padding: 0; list-style: none; }
+    .health-bubble {
+      display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 7px; max-width: 100%;
+      padding: 7px 11px; border: 1px solid #d7e0e6; border-radius: 999px;
+      color: #3e5365; background: #eef2f5; font-size: 13px;
     }
-    .recommendation-close:hover { background: var(--mint); }
-    .recommendation-intro, .recommendation-note { color: var(--muted); line-height: 1.5; }
-    .recommendation-intro { margin: 0 0 16px; }
-    .recommendation-note { margin: 15px 0 0; font-size: 13px; }
-    .recommendation-urgent { margin: 0 0 18px; padding: 10px 12px; background: #fff4e3; color: #684300; border-radius: 9px; font-size: 14px; }
-    .recommendation-urgent a { font-weight: 700; }
-    .recommendation-fields, .recommendation-result, .recommendation-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .recommendation-dialog .login-field label { font-size: 14px; font-weight: 600; }
-    .recommendation-dialog .login-field :is(input, textarea, select) { font-size: 16px; }
-    .recommendation-result[hidden] { display: none; }
-    .recommendation-result { margin-top: 20px; }
-    .recommendation-result section { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
-    .recommendation-result h3 { margin: 0 0 8px; color: var(--navy); font-size: 17px; }
-    .recommendation-result p, .recommendation-result li { font-size: 14px; line-height: 1.5; }
-    .recommendation-result ul { margin: 0; padding-left: 18px; }
-    .recommendation-result li + li { margin-top: 8px; }
-    .recommendation-description { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .recommendation-facts { margin: 12px 0 0; font-size: 13px; }
-    .recommendation-facts div { min-width: 0; }
-    .recommendation-facts dt { font-weight: 600; }
-    .recommendation-facts dd { margin: 3px 0 0; color: var(--muted); overflow-wrap: anywhere; }
-    @media (max-width: 540px) {
-      .recommendation-fields, .recommendation-result { grid-template-columns: minmax(0, 1fr); }
-      .recommendation-dialog .recommendation-close { right: 10px; }
-    }
+    .health-bubble[data-tone="positive"] { color: #1a6146; background: #e7f5ec; border-color: #bfdcc9; }
+    .health-bubble[data-tone="middle"] { color: #694712; background: #fff2d5; border-color: #ecd2a4; }
+    .health-bubble[data-tone="low"] { color: #802b45; background: #fbe7ee; border-color: #ecc1d0; }
+    .health-bubble[data-tone="sleep"] { color: #244b80; background: #e7f0fd; border-color: #bfd2ec; }
+    .health-bubble[data-tone="symptoms"] { color: #5b3c80; background: #f2ebfb; border-color: #ddc9f3; }
+    .health-source, .health-caption { color: var(--muted); }
+    .health-source { padding-top: 9px; border-top: 1px solid var(--line); }
+    .health-summary details[hidden], .health-summary [hidden] { display: none; }
 
   </style>
 </head>
@@ -369,7 +342,7 @@
       <div class="nav-pages">
         <a href="#kryptis">Mūsų kryptis</a>
         <a href="#atsakingumas">Atsakingumas</a>
-        <button class="recommendation-trigger" id="recommendation-trigger" type="button" aria-haspopup="dialog">Rekomendacijos</button>
+        <a href="#prisijungimo-maketas">Rekomendacijos</a>
         <a href="#apie">Apie projektą</a>
       </div>
       <div class="nav-actions">
@@ -379,55 +352,6 @@
       </div>
     </nav>
   </header>
-  <dialog class="recommendation-dialog" id="rekomendacijos" aria-labelledby="recommendation-title">
-    <div class="recommendation-inner">
-      <form method="dialog">
-        <button class="login-close recommendation-close" type="submit" aria-label="Uždaryti rekomendacijų langą">×</button>
-      </form>
-      <span class="eyebrow">DI demonstracija</span>
-      <h2 id="recommendation-title">Rekomendacijos</h2>
-      <p class="recommendation-intro">Trumpai aprašyk, kaip jautiesi. Paruošime santrauką ir pasiūlysime, ką verta aptarti su gydytoju.</p>
-      <p class="recommendation-urgent">Jei kyla grėsmė gyvybei, <a href="tel:112">skambink 112</a>.</p>
-      <form class="account-form" id="recommendation-form" method="post">
-        <div class="login-field">
-          <label for="recommendation-description">Kaip jautiesi?</label>
-          <textarea id="recommendation-description" maxlength="600" placeholder="Pvz., nuo vakar skauda galvą" required autofocus></textarea>
-        </div>
-        <div class="recommendation-fields">
-          <div class="login-field">
-            <label for="recommendation-onset">Kada tai prasidėjo?</label>
-            <input id="recommendation-onset" type="text" maxlength="60" placeholder="Pvz., prieš dvi dienas">
-          </div>
-          <div class="login-field">
-            <label for="recommendation-change">Kaip būklė keičiasi?</label>
-            <select id="recommendation-change">
-              <option value="">Pasirink, jei žinai</option>
-              <option value="better">Gerėja</option>
-              <option value="same">Nesikeičia</option>
-              <option value="worse">Blogėja</option>
-              <option value="recurs">Kartojasi</option>
-            </select>
-          </div>
-        </div>
-        <button class="login-submit" type="submit" disabled>Peržiūrėti santrauką ir rekomendacijas</button>
-      </form>
-      <div class="recommendation-result" id="recommendation-result" hidden>
-        <section>
-          <h3 id="recommendation-result-title" tabindex="-1">Tavo būklės santrauka</h3>
-          <p class="recommendation-description" id="recommendation-summary"></p>
-          <dl class="recommendation-facts">
-            <div><dt>Prasidėjo</dt><dd id="recommendation-summary-onset"></dd></div>
-            <div><dt>Pokytis</dt><dd id="recommendation-summary-change"></dd></div>
-          </dl>
-        </section>
-        <section>
-          <h3>Siūlomi tolesni žingsniai</h3>
-          <ul id="recommendation-steps"></ul>
-        </section>
-      </div>
-      <p class="recommendation-note">Pasiūlymai paruošti iš anksto. Jie nepakeičia sveikatos specialisto konsultacijos. Šio lango įvestis nesaugoma.</p>
-    </div>
-  </dialog>
   <div class="login-preview" id="prisijungimo-maketas" role="dialog" aria-modal="true" aria-labelledby="login-title">
     <section class="login-card">
       <a class="login-close" href="#" aria-label="Uždaryti prisijungimo langą">×</a>
@@ -466,6 +390,25 @@
       <div class="account-panel" id="records-panel" hidden>
         <h2 id="records-title" tabindex="-1">Mano informacija</h2>
         <p id="signed-in-as"></p>
+        <section class="health-summary" aria-labelledby="health-summary-title">
+          <span class="eyebrow">DI demonstracija</span>
+          <h3 id="health-summary-title">Tavo būklės santrauka</h3>
+          <p id="health-summary-status" role="status">Įkeliama santrauka…</p>
+          <div id="health-summary-details" hidden>
+            <ul class="health-bubbles" id="health-bubbles" aria-label="Sveikatos įrašo santrauka"></ul>
+            <details id="health-symptoms" hidden>
+              <summary>Pojūčių aprašymas</summary>
+              <p></p>
+            </details>
+            <details id="health-notes" hidden>
+              <summary>Papildomos pastabos</summary>
+              <p></p>
+            </details>
+            <p id="health-next-step"></p>
+            <p class="health-source"><strong>Duomenų šaltinis:</strong> tavo „Medarnės“ sveikatos dienoraštis („Firestore“). <span id="health-source-date"></span></p>
+          </div>
+          <p class="health-caption">Spalvos žymi tavo pasirinktą savijautą arba įrašo tipą. Tai dienoraščio santrauka.</p>
+        </section>
         <div class="privacy-copy">Šie užrašai skirti tavo asmeniniam dienoraščiui. Jie nėra medicininis įrašas ar gydytojo konsultacija. Nesaugok čia informacijos, jei nesutinki ją perduoti Firebase paslaugai.</div>
         <form class="account-form" id="record-form" style="margin-top:20px">
           <div class="login-field"><label for="record-date">Data</label><input id="record-date" name="date" type="date" required></div>
@@ -602,71 +545,6 @@
     </div>
   </footer>
   <script type="module">
-    const recommendationDialog = document.getElementById("rekomendacijos");
-    const recommendationForm = document.getElementById("recommendation-form");
-    const descriptionField = document.getElementById("recommendation-description");
-    const onsetField = document.getElementById("recommendation-onset");
-    const changeField = document.getElementById("recommendation-change");
-    const result = document.getElementById("recommendation-result");
-    const stepList = document.getElementById("recommendation-steps");
-
-    const nextSteps = {
-      better: "Jei būklė vėl pasikeis, pasižymėk, kada tai nutiko ir ką tuo metu veikei.",
-      same: "Pasižymėk, ar ir kaip šie pojūčiai trukdo kasdienei veiklai.",
-      worse: "Jei jauti, kad būklė blogėja, susisiek su gydytoju.",
-      recurs: "Pasižymėk, kaip dažnai tai kartojasi, kiek trunka ir kas vyko prieš prasidedant.",
-    };
-
-    document.getElementById("recommendation-trigger").addEventListener("click", () => {
-      recommendationDialog.showModal();
-    });
-
-    recommendationForm.addEventListener("submit", event => {
-      event.preventDefault();
-      const description = descriptionField.value.trim();
-      if (!description) {
-        descriptionField.setCustomValidity("Trumpai aprašyk, kaip jautiesi.");
-        descriptionField.reportValidity();
-        return;
-      }
-
-      const trend = changeField.value;
-      const trendLabel = trend ? changeField.selectedOptions[0].textContent : "Nenurodyta";
-      document.getElementById("recommendation-summary").textContent = description;
-      document.getElementById("recommendation-summary-onset").textContent = onsetField.value.trim() || "Nenurodyta";
-      document.getElementById("recommendation-summary-change").textContent = trendLabel;
-
-      const steps = [
-        nextSteps[trend] || "Atkreipk dėmesį, ar pojūčiai stiprėja, silpnėja, ar kartojasi.",
-        "Jei kreipsiesi į gydytoją, parodyk šią santrauką ir pasakyk, kas labiausiai neramina.",
-      ];
-      stepList.replaceChildren(...steps.map(step => {
-        const item = document.createElement("li");
-        item.textContent = step;
-        return item;
-      }));
-      result.hidden = false;
-      document.getElementById("recommendation-result-title").focus();
-    });
-
-    recommendationForm.addEventListener("input", () => {
-      descriptionField.setCustomValidity("");
-      result.hidden = true;
-    });
-
-    recommendationDialog.addEventListener("close", () => {
-      recommendationForm.reset();
-      descriptionField.setCustomValidity("");
-      result.hidden = true;
-      stepList.replaceChildren();
-      for (const id of ["recommendation-summary", "recommendation-summary-onset", "recommendation-summary-change"]) {
-        document.getElementById(id).textContent = "";
-      }
-    });
-
-    recommendationForm.querySelector("[type=submit]").disabled = false;
-  </script>
-  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
     import {
       createUserWithEmailAndPassword,
@@ -730,6 +608,15 @@
     const authSwitchPrompt = document.getElementById("auth-switch-prompt");
     const resetPassword = document.getElementById("reset-password-button");
     const recordsTitle = document.getElementById("records-title");
+    const healthSummaryStatus = document.getElementById("health-summary-status");
+    const healthSummaryDetails = document.getElementById("health-summary-details");
+    const healthBubbles = document.getElementById("health-bubbles");
+    const healthSymptoms = document.getElementById("health-symptoms");
+    const healthNotes = document.getElementById("health-notes");
+    const healthNextStep = document.getElementById("health-next-step");
+    const healthSourceDate = document.getElementById("health-source-date");
+    const healthDateFormat = new Intl.DateTimeFormat("lt-LT", { dateStyle: "long" });
+    let recordsLoadId = 0;
     let currentUser = null;
     let isRegistering = false;
     let authBusy = false;
@@ -763,11 +650,63 @@
       return new Date(now.getTime() - offset).toISOString().slice(0, 10);
     }
 
+    function displayRecordDate(value) {
+      const date = new Date(`${value}T12:00:00`);
+      return Number.isFinite(date.getTime()) ? healthDateFormat.format(date) : "Data nenurodyta";
+    }
+
+    function healthBubble(label, value, tone = "") {
+      const item = document.createElement("li");
+      item.className = "health-bubble";
+      item.dataset.tone = tone;
+      const name = document.createElement("strong");
+      name.textContent = label + ":";
+      item.append(name, value);
+      return item;
+    }
+
+    function setHealthDetail(panel, text) {
+      panel.open = false;
+      panel.hidden = !text;
+      panel.querySelector("p").textContent = text;
+    }
+
+    function renderHealthSummary(record, message = "") {
+      healthSummaryStatus.textContent = message;
+      healthSummaryStatus.hidden = !message;
+      healthSummaryDetails.hidden = !record;
+      healthBubbles.replaceChildren();
+      setHealthDetail(healthSymptoms, record?.painDescription || "");
+      setHealthDetail(healthNotes, record?.notes || "");
+      healthSourceDate.textContent = "";
+      healthNextStep.textContent = "";
+      if (!record) return;
+
+      const moodTone = {
+        "labai-gerai": "positive",
+        gerai: "positive",
+        vidutiniskai: "middle",
+        prastai: "low",
+        "labai-prastai": "low",
+      };
+      const hasSleep = Number.isFinite(record.sleepHours);
+      const hasSymptoms = Boolean(record.painDescription);
+      healthBubbles.append(
+        healthBubble("Savijauta", record.mood ? (record.moodLabel || record.mood) : "Neįrašyta", moodTone[record.mood] || ""),
+        healthBubble("Miegas", hasSleep ? `${String(record.sleepHours).replace(".", ",")} val.` : "Neįrašyta", hasSleep ? "sleep" : ""),
+        healthBubble("Pojūčiai", hasSymptoms ? "Aprašyti" : "Neįrašyti", hasSymptoms ? "symptoms" : ""),
+      );
+      healthSourceDate.textContent = `Įrašo data: ${displayRecordDate(record.date)}.`;
+      healthNextStep.textContent = hasSymptoms
+        ? "Ruošdamasis konsultacijai gali pasižymėti, kada pojūčiai prasidėjo ir kaip keitėsi."
+        : "Papildyk dienoraštį, jei nori sekti, kaip savijauta keičiasi laikui bėgant.";
+    }
+
     function appendRecord(record) {
       const item = document.createElement("li");
       item.className = "record-item";
       const title = document.createElement("strong");
-      title.textContent = new Intl.DateTimeFormat("lt-LT", { dateStyle: "long" }).format(new Date(`${record.date}T12:00:00`));
+      title.textContent = displayRecordDate(record.date);
       item.append(title);
       const details = [
         record.sleepHours !== null && record.sleepHours !== undefined ? `Miegas: ${String(record.sleepHours).replace(".", ",")} val.` : "",
@@ -784,15 +723,29 @@
     }
 
     async function loadRecords(user) {
+      if (!user || currentUser !== user) return;
+      const loadId = ++recordsLoadId;
       recordList.replaceChildren();
+      renderHealthSummary(null, "Įkeliama santrauka…");
       setStatus(recordStatus, "Įkeliami tavo įrašai…");
       try {
         const recordsQuery = query(userRecordsCollection(user), orderBy("date", "desc"), limit(30));
         const snapshot = await getDocs(recordsQuery);
-        for (const recordDoc of snapshot.docs) appendRecord(recordDoc.data());
+        if (loadId !== recordsLoadId || currentUser !== user) return;
+        const records = snapshot.docs.map(doc => doc.data());
+        for (const record of records) appendRecord(record);
+        const latest = records.reduce((selected, record) => {
+          if (!selected) return record;
+          if (record.date !== selected.date) return selected;
+          return (record.createdAt?.toMillis?.() ?? 0) > (selected.createdAt?.toMillis?.() ?? 0)
+            ? record : selected;
+        }, null);
+        renderHealthSummary(latest, latest ? "" : "Išsaugok pirmą įrašą žemiau, kad matytum santrauką.");
         setStatus(recordStatus, snapshot.empty ? "Įrašų dar nėra." : `Rodomi naujausi ${snapshot.size} įrašų.`, "success");
       } catch (error) {
+        if (loadId !== recordsLoadId || currentUser !== user) return;
         console.error("Nepavyko įkelti sveikatos įrašų:", error.code || error.message);
+        renderHealthSummary(null, "Nepavyko įkelti santraukos. Pabandyk atidaryti ankstesnių įrašų sąrašą.");
         setStatus(recordStatus, firebaseMessage(error), "error");
       }
     }
@@ -986,7 +939,9 @@
       saveButton.disabled = true;
       setStatus(recordStatus, "Įrašas saugomas…");
       try {
-        await addDoc(userRecordsCollection(currentUser), record);
+        const user = currentUser;
+        await addDoc(userRecordsCollection(user), record);
+        if (currentUser !== user) return;
         recordForm.reset();
         document.getElementById("record-date").value = localToday();
         setStatus(recordStatus, "Įrašas išsaugotas tavo paskyroje.", "success");
@@ -1011,6 +966,8 @@
 
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
+      recordsLoadId++;
+      renderHealthSummary(null, user ? "Įkeliama santrauka…" : "");
       loginTrigger.hidden = Boolean(user);
       myInformationTrigger.hidden = !user;
       authPanel.hidden = Boolean(user);
