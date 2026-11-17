@@ -295,6 +295,10 @@
 
     .footer { padding-block: 46px 23px; border-top: 1px solid var(--line); background: var(--paper); }
     .footer-inner { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, .75fr) minmax(0, .95fr) minmax(0, 1.4fr); gap: 28px; }
+    .complaint-form { max-width: 620px; margin-top: 28px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); }
+    .complaint-form h2 { margin-bottom: 8px; }
+    .complaint-form .login-field { margin-top: 14px; }
+    .complaint-form .account-status { margin-top: 8px; }
     .footer h2 { margin: 0 0 9px; color: var(--navy); font-size: 16px; }
     .footer .brand { color: var(--navy); font-size: 22px; }
     .footer .brand-mark { width: 38px; }
@@ -729,9 +733,22 @@
         <section id="privatumas" aria-labelledby="privacy-title">
           <h2 id="privacy-title">Privatumas</h2>
           <p>Paskyrai valdyti naudojamas el. pašto adresas. Kai išsaugai įrašą, jo data, miego trukmė, savijauta, pojūčių aprašymas ir pastabos susiejami su tavo paskyra „Cloud Firestore“.</p>
-          <p>Santrauka sudaroma naršyklėje iš tavo išsaugoto įrašo.</p>
+          <p>Santrauka sudaroma naršyklėje iš tavo dienoraščio įrašų. Nusiskundimų tekstas, kai jis siunčiamas, saugomas atskirai „Cloud Firestore“ ir viešai nerodomas. Nusiskundimų formoje neprašoma tavo vardo ar el. pašto adreso.</p>
         </section>
       </div>
+      <section class="complaint-form" aria-labelledby="complaint-title">
+        <h2 id="complaint-title">Nusiskundimai ir pasiūlymai</h2>
+        <p>Parašyk, ką norėtum pranešti Medarnės administracijai. Pranešimai viešai nerodomi. Siuntimui reikia <a href="#prisijungimo-maketas">prisijungti</a>.</p>
+        <form class="account-form" id="complaint-form">
+          <div class="login-field">
+            <label for="complaint-message">Tavo pranešimas</label>
+            <textarea id="complaint-message" name="message" minlength="10" maxlength="3000" required placeholder="Aprašyk nusiskundimą ar pasiūlymą"></textarea>
+          </div>
+          <button class="login-submit" id="send-complaint-button" type="submit">Siųsti administracijai</button>
+        </form>
+        <p class="account-status" id="complaint-status" role="status" aria-live="polite"></p>
+        <p>Įrašomas tik pranešimo tekstas ir pateikimo laikas. Nerašyk čia slaptažodžių ar skubios medicininės pagalbos prašymų.</p>
+      </section>
       <div class="footer-bottom">
         <p class="footer-creators"><strong>Kūrėjai:</strong> Domantas Mockaitis, Ainius Cesnulevicius, Urte Ignataviciute.</p>
         <span>© Medarnė</span>
@@ -830,6 +847,9 @@
     const authStatus = document.getElementById("auth-status");
     const recordStatus = document.getElementById("record-status");
     const recordForm = document.getElementById("record-form");
+    const complaintForm = document.getElementById("complaint-form");
+    const complaintStatus = document.getElementById("complaint-status");
+    const complaintButton = document.getElementById("send-complaint-button");
     const recordList = document.getElementById("record-list");
     const saveButton = document.getElementById("save-record-button");
     const historyToggle = document.getElementById("history-toggle");
@@ -1245,6 +1265,38 @@
         setStatus(recordStatus, firebaseMessage(error), "error");
       } finally {
         saveButton.disabled = false;
+      }
+    });
+
+    complaintForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!currentUser) {
+        setStatus(complaintStatus, "Kad pranešimas būtų siunčiamas privačiai administracijai, pirmiausia prisijunk prie paskyros.", "error");
+        return;
+      }
+      const message = String(new FormData(complaintForm).get("message") || "").trim();
+      if (message.length < 10 || message.length > 3000) {
+        setStatus(complaintStatus, "Pranešimą sudaro 10–3000 simbolių.", "error");
+        return;
+      }
+      complaintButton.disabled = true;
+      setStatus(complaintStatus, "Pranešimas siunčiamas…");
+      try {
+        await addDoc(collection(db, "complaints"), {
+          message,
+          createdAt: serverTimestamp()
+        });
+        complaintForm.reset();
+        setStatus(complaintStatus, "Pranešimas išsiųstas administracijai. Jis viešai nerodomas.", "success");
+      } catch (error) {
+        console.error("Nusiskundimo išsiųsti nepavyko:", error.code || error.message);
+        if (error.code === "permission-denied") {
+          setStatus(complaintStatus, "Pranešimų saugojimas dar neįjungtas. Reikia paskelbti saugias Firestore taisykles.", "error");
+        } else {
+          setStatus(complaintStatus, firebaseMessage(error), "error");
+        }
+      } finally {
+        complaintButton.disabled = false;
       }
     });
 
