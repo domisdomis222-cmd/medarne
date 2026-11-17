@@ -306,6 +306,60 @@
       html { scroll-behavior: auto; }
       *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
+    .nav-pages { flex-wrap: wrap; gap: 10px clamp(16px, 2.1vw, 35px); }
+    .recommendation-trigger {
+      min-height: 44px;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--navy);
+      cursor: pointer;
+      font: inherit;
+    }
+    .recommendation-trigger:hover { color: var(--teal); }
+    .recommendation-dialog {
+      width: min(680px, calc(100% - 28px));
+      max-height: calc(100dvh - 28px);
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      color: var(--ink);
+      background: var(--white);
+      box-shadow: 0 24px 70px #0a30492e;
+    }
+    .recommendation-dialog::backdrop { background: #0a3049a6; }
+    .recommendation-inner { position: relative; padding: clamp(22px, 5vw, 38px); }
+    .recommendation-inner h2 { margin: 12px 0 8px; font-size: clamp(28px, 5vw, 38px); letter-spacing: -.03em; }
+    .recommendation-close {
+      width: 40px; height: 40px; padding: 0; border: 0; border-radius: 8px;
+      background: transparent; cursor: pointer;
+    }
+    .recommendation-close:hover { background: var(--mint); }
+    .recommendation-intro, .recommendation-note { color: var(--muted); line-height: 1.5; }
+    .recommendation-intro { margin: 0 0 16px; }
+    .recommendation-note { margin: 15px 0 0; font-size: 13px; }
+    .recommendation-urgent { margin: 0 0 18px; padding: 10px 12px; background: #fff4e3; color: #684300; border-radius: 9px; font-size: 14px; }
+    .recommendation-urgent a { font-weight: 700; }
+    .recommendation-fields, .recommendation-result, .recommendation-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .recommendation-dialog .login-field label { font-size: 14px; font-weight: 600; }
+    .recommendation-dialog .login-field :is(input, textarea, select) { font-size: 16px; }
+    .recommendation-result[hidden] { display: none; }
+    .recommendation-result { margin-top: 20px; }
+    .recommendation-result section { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+    .recommendation-result h3 { margin: 0 0 8px; color: var(--navy); font-size: 17px; }
+    .recommendation-result p, .recommendation-result li { font-size: 14px; line-height: 1.5; }
+    .recommendation-result ul { margin: 0; padding-left: 18px; }
+    .recommendation-result li + li { margin-top: 8px; }
+    .recommendation-description { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .recommendation-facts { margin: 12px 0 0; font-size: 13px; }
+    .recommendation-facts div { min-width: 0; }
+    .recommendation-facts dt { font-weight: 600; }
+    .recommendation-facts dd { margin: 3px 0 0; color: var(--muted); overflow-wrap: anywhere; }
+    @media (max-width: 540px) {
+      .recommendation-fields, .recommendation-result { grid-template-columns: minmax(0, 1fr); }
+      .recommendation-dialog .recommendation-close { right: 10px; }
+    }
+
   </style>
 </head>
 <body>
@@ -315,6 +369,7 @@
       <div class="nav-pages">
         <a href="#kryptis">Mūsų kryptis</a>
         <a href="#atsakingumas">Atsakingumas</a>
+        <button class="recommendation-trigger" id="recommendation-trigger" type="button" aria-haspopup="dialog">Rekomendacijos</button>
         <a href="#apie">Apie projektą</a>
       </div>
       <div class="nav-actions">
@@ -324,6 +379,55 @@
       </div>
     </nav>
   </header>
+  <dialog class="recommendation-dialog" id="rekomendacijos" aria-labelledby="recommendation-title">
+    <div class="recommendation-inner">
+      <form method="dialog">
+        <button class="login-close recommendation-close" type="submit" aria-label="Uždaryti rekomendacijų langą">×</button>
+      </form>
+      <span class="eyebrow">DI demonstracija</span>
+      <h2 id="recommendation-title">Rekomendacijos</h2>
+      <p class="recommendation-intro">Trumpai aprašyk, kaip jautiesi. Paruošime santrauką ir pasiūlysime, ką verta aptarti su gydytoju.</p>
+      <p class="recommendation-urgent">Jei kyla grėsmė gyvybei, <a href="tel:112">skambink 112</a>.</p>
+      <form class="account-form" id="recommendation-form" method="post">
+        <div class="login-field">
+          <label for="recommendation-description">Kaip jautiesi?</label>
+          <textarea id="recommendation-description" maxlength="600" placeholder="Pvz., nuo vakar skauda galvą" required autofocus></textarea>
+        </div>
+        <div class="recommendation-fields">
+          <div class="login-field">
+            <label for="recommendation-onset">Kada tai prasidėjo?</label>
+            <input id="recommendation-onset" type="text" maxlength="60" placeholder="Pvz., prieš dvi dienas">
+          </div>
+          <div class="login-field">
+            <label for="recommendation-change">Kaip būklė keičiasi?</label>
+            <select id="recommendation-change">
+              <option value="">Pasirink, jei žinai</option>
+              <option value="better">Gerėja</option>
+              <option value="same">Nesikeičia</option>
+              <option value="worse">Blogėja</option>
+              <option value="recurs">Kartojasi</option>
+            </select>
+          </div>
+        </div>
+        <button class="login-submit" type="submit" disabled>Peržiūrėti santrauką ir rekomendacijas</button>
+      </form>
+      <div class="recommendation-result" id="recommendation-result" hidden>
+        <section>
+          <h3 id="recommendation-result-title" tabindex="-1">Tavo būklės santrauka</h3>
+          <p class="recommendation-description" id="recommendation-summary"></p>
+          <dl class="recommendation-facts">
+            <div><dt>Prasidėjo</dt><dd id="recommendation-summary-onset"></dd></div>
+            <div><dt>Pokytis</dt><dd id="recommendation-summary-change"></dd></div>
+          </dl>
+        </section>
+        <section>
+          <h3>Siūlomi tolesni žingsniai</h3>
+          <ul id="recommendation-steps"></ul>
+        </section>
+      </div>
+      <p class="recommendation-note">Pasiūlymai paruošti iš anksto. Jie nepakeičia sveikatos specialisto konsultacijos. Šio lango įvestis nesaugoma.</p>
+    </div>
+  </dialog>
   <div class="login-preview" id="prisijungimo-maketas" role="dialog" aria-modal="true" aria-labelledby="login-title">
     <section class="login-card">
       <a class="login-close" href="#" aria-label="Uždaryti prisijungimo langą">×</a>
@@ -497,6 +601,71 @@
       <span>© Medarnė</span>
     </div>
   </footer>
+  <script type="module">
+    const recommendationDialog = document.getElementById("rekomendacijos");
+    const recommendationForm = document.getElementById("recommendation-form");
+    const descriptionField = document.getElementById("recommendation-description");
+    const onsetField = document.getElementById("recommendation-onset");
+    const changeField = document.getElementById("recommendation-change");
+    const result = document.getElementById("recommendation-result");
+    const stepList = document.getElementById("recommendation-steps");
+
+    const nextSteps = {
+      better: "Jei būklė vėl pasikeis, pasižymėk, kada tai nutiko ir ką tuo metu veikei.",
+      same: "Pasižymėk, ar ir kaip šie pojūčiai trukdo kasdienei veiklai.",
+      worse: "Jei jauti, kad būklė blogėja, susisiek su gydytoju.",
+      recurs: "Pasižymėk, kaip dažnai tai kartojasi, kiek trunka ir kas vyko prieš prasidedant.",
+    };
+
+    document.getElementById("recommendation-trigger").addEventListener("click", () => {
+      recommendationDialog.showModal();
+    });
+
+    recommendationForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const description = descriptionField.value.trim();
+      if (!description) {
+        descriptionField.setCustomValidity("Trumpai aprašyk, kaip jautiesi.");
+        descriptionField.reportValidity();
+        return;
+      }
+
+      const trend = changeField.value;
+      const trendLabel = trend ? changeField.selectedOptions[0].textContent : "Nenurodyta";
+      document.getElementById("recommendation-summary").textContent = description;
+      document.getElementById("recommendation-summary-onset").textContent = onsetField.value.trim() || "Nenurodyta";
+      document.getElementById("recommendation-summary-change").textContent = trendLabel;
+
+      const steps = [
+        nextSteps[trend] || "Atkreipk dėmesį, ar pojūčiai stiprėja, silpnėja, ar kartojasi.",
+        "Jei kreipsiesi į gydytoją, parodyk šią santrauką ir pasakyk, kas labiausiai neramina.",
+      ];
+      stepList.replaceChildren(...steps.map(step => {
+        const item = document.createElement("li");
+        item.textContent = step;
+        return item;
+      }));
+      result.hidden = false;
+      document.getElementById("recommendation-result-title").focus();
+    });
+
+    recommendationForm.addEventListener("input", () => {
+      descriptionField.setCustomValidity("");
+      result.hidden = true;
+    });
+
+    recommendationDialog.addEventListener("close", () => {
+      recommendationForm.reset();
+      descriptionField.setCustomValidity("");
+      result.hidden = true;
+      stepList.replaceChildren();
+      for (const id of ["recommendation-summary", "recommendation-summary-onset", "recommendation-summary-change"]) {
+        document.getElementById(id).textContent = "";
+      }
+    });
+
+    recommendationForm.querySelector("[type=submit]").disabled = false;
+  </script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
     import {
