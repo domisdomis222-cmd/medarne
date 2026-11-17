@@ -91,7 +91,8 @@
     .doctor-filters input, .doctor-filters select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--white); color: var(--ink); font: inherit; }
     .doctor-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
     .doctor-card { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
-    .doctor-card h3 { margin: 0 0 5px; font: 650 20px var(--sans); color: var(--navy); }
+    .doctor-card h3, .doctor-profile-link { display: block; margin: 0 0 5px; font: 650 20px var(--sans); color: var(--navy); text-decoration: none; }
+    .doctor-profile-link:hover { color: var(--teal); text-decoration: underline; text-underline-offset: 3px; }
     .doctor-card p { margin: 4px 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
     .doctor-register { min-height: 40px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--green); color: white; font: inherit; font-size: 12px; cursor: pointer; }
     .doctor-register:hover { background: #527765; }
@@ -386,7 +387,7 @@
       <span class="eyebrow">Medarnės gydytojų paieška</span>
       <h2 id="specialists-title">Rask gydytoją pagal specializaciją</h2>
       <p>Pasirink specializaciją arba įrašyk gydytojo vardą.</p>
-      <div class="demo-notice">Demonstracinė peržiūra: gydytojų kortelės yra pavyzdinės. Registracija pas gydytoją dar neveikia.</div>
+      <div class="demo-notice">Viešai skelbiamų gydytojų profilių pavyzdžiai iš „ManoDaktaras.lt“; sąrašas nėra išsamus. Per Medarnę registracija dar neveikia. Profilį ir galimą registraciją patikrinkite paspaudę gydytojo kortelės nuorodą.</div>
       <div class="doctor-filters">
         <label for="specialty-filter">Specializacija
           <select id="specialty-filter">
@@ -396,7 +397,7 @@
             <option value="Dermatologas">Dermatologas</option>
             <option value="Neurologas">Neurologas</option>
             <option value="Endokrinologas">Endokrinologas</option>
-            <option value="Psichologas">Psichologas</option>
+            <option value="Psichiatras">Psichiatras</option>
           </select>
         </label>
         <label for="doctor-search">Gydytojo vardas
@@ -628,12 +629,24 @@
     }
 
     const demoDoctors = [
-      { name: "Gydytoja Rasa Pavyzdienė", specialty: "Šeimos gydytojas", city: "Vilnius", note: "Demonstracinis profilis" },
-      { name: "Gydytojas Mantas Pavyzdys", specialty: "Kardiologas", city: "Kaunas", note: "Demonstracinis profilis" },
-      { name: "Gydytoja Ieva Pavyzdienė", specialty: "Dermatologas", city: "Klaipėda", note: "Demonstracinis profilis" },
-      { name: "Gydytojas Tomas Pavyzdys", specialty: "Neurologas", city: "Vilnius", note: "Demonstracinis profilis" },
-      { name: "Gydytoja Eglė Pavyzdienė", specialty: "Endokrinologas", city: "Šiauliai", note: "Demonstracinis profilis" },
-      { name: "Psichologė Lina Pavyzdienė", specialty: "Psichologas", city: "Kaunas", note: "Demonstracinis profilis" }
+      { name: "Rimvydė Bliūdžiuvienė", specialty: "Šeimos gydytojas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/seimos-gydytojas/rimvyde-bliudziuviene/17109" },
+      { name: "Gediminas Burba", specialty: "Šeimos gydytojas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/seimos-gydytojas/gediminas-burba/13679" },
+      { name: "Lina Mickevičienė", specialty: "Šeimos gydytojas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/seimos-gydytojas/lina-mickeviciene/11594" },
+      { name: "Gintarė Neverauskaitė-Piliponienė", specialty: "Kardiologas", city: "Kaunas, Šiauliai, Vilnius", url: "https://www.manodaktaras.lt/gydytojas/kardiologas/gintare--neverauskaite-piliponiene/14861" },
+      { name: "Aušra Krivickienė", specialty: "Kardiologas", city: "Kaunas", url: "https://www.manodaktaras.lt/gydytojas/kardiologas/ausra-krivickiene/12444" },
+      { name: "Jonas Misiūra", specialty: "Kardiologas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/kardiologas/jonas-misiura/14566" },
+      { name: "Irena Blaškevič-Sohn", specialty: "Dermatologas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/dermatologas/irena-blaskevic-sohn/7002" },
+      { name: "Lina Martinėlė", specialty: "Dermatologas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/dermatologas/lina-martinele/14099" },
+      { name: "Inga Valavičienė", specialty: "Dermatologas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/dermatologas/inga-valaviciene/10356" },
+      { name: "Ingrida Dabušinskienė", specialty: "Neurologas", city: "Kaunas", url: "https://www.manodaktaras.lt/gydytojas/neurologas/ingrida-dabusinskiene/8904" },
+      { name: "Vytautas Danielius", specialty: "Neurologas", city: "Klaipėda", url: "https://www.manodaktaras.lt/gydytojas/neurologas/vytautas-danielius/16451" },
+      { name: "Monika Remenčiūtė", specialty: "Neurologas", city: "Žr. profilį", url: "https://www.manodaktaras.lt/gydytojas/neurologas/monika-remenciute/14947" },
+      { name: "Erika Givony", specialty: "Endokrinologas", city: "Kaunas", url: "https://www.manodaktaras.lt/gydytojas/endokrinologas/erika-givony/14864" },
+      { name: "Danguolė Jankuvienė", specialty: "Endokrinologas", city: "Kaunas", url: "https://www.manodaktaras.lt/gydytojas/endokrinologas/danguole-jankuviene/2377" },
+      { name: "Modesta Aleknienė", specialty: "Endokrinologas", city: "Klaipėda", url: "https://www.manodaktaras.lt/gydytojas/endokrinologas/modesta-alekniene/15600" },
+      { name: "Saulius Sologubovas", specialty: "Psichiatras", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/psichiatras/saulius-sologubovas/10909" },
+      { name: "Lina Matutytė", specialty: "Psichiatras", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/psichiatras/lina-matutyte/13925" },
+      { name: "Rasa Meištienė", specialty: "Psichiatras", city: "Kaunas", url: "https://www.manodaktaras.lt/gydytojas/psichiatras/rasa-meistiene/9569" }
     ];
 
     function renderSpecialists() {
@@ -650,20 +663,27 @@
         const item = document.createElement("li");
         item.className = "doctor-card";
         const info = document.createElement("div");
-        const name = document.createElement("h3");
+        const name = document.createElement("a");
+        name.href = doctor.url;
+        name.target = "_blank";
+        name.rel = "noopener noreferrer";
         name.textContent = doctor.name;
+        name.setAttribute("aria-label", `${doctor.name} viešas profilis atsidaro naujame lange`);
+        name.className = "doctor-profile-link";
         const specialty = document.createElement("p");
         specialty.textContent = doctor.specialty;
         const city = document.createElement("p");
-        city.textContent = `${doctor.city} · ${doctor.note}`;
+        city.textContent = doctor.city;
+        const profileLabel = document.createElement("p");
+        profileLabel.textContent = "Peržiūrėti viešą profilį";
+        info.append(name, specialty, city, profileLabel);
         const register = document.createElement("button");
         register.className = "doctor-register";
         register.type = "button";
         register.textContent = "Registruotis";
         register.addEventListener("click", () => {
-          window.alert("Registracija pas gydytoją dar neveikia. Šie gydytojų profiliai yra tik demonstraciniai.");
+          window.alert("Medarnėje registracija dar neveikia. Paspauskite gydytojo vardą, kad atsidarytų viešas profilis ir galimos registracijos informacija.");
         });
-        info.append(name, specialty, city);
         item.append(info, register);
         doctorList.append(item);
       }
