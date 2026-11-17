@@ -383,17 +383,96 @@
     .health-source { padding-top: 9px; border-top: 1px solid var(--line); }
     .health-summary details[hidden], .health-summary [hidden] { display: none; }
 
-    .plan-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 3vw, 28px); margin-top: 25px; }
-    .plan-card { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(18px, 3vw, 28px); border: 1px solid var(--line); border-radius: 20px; background: var(--white); }
-    .plan-premium { background: linear-gradient(145deg, var(--paper), var(--mint)); border-color: #8dc8c2; }
-    .plan-card h3 { margin: 0; color: var(--navy); font-size: 22px; }
-    .plan-price { margin: 8px 0; color: var(--navy); font-size: 38px; font-weight: 700; letter-spacing: -.04em; }
-    .plan-card ul { display: grid; gap: 7px; margin: 8px 0 22px; padding-left: 19px; color: var(--muted); font-size: 14px; line-height: 1.45; }
-    .plan-card .button { margin-top: auto; border: 1px solid var(--teal); text-align: center; cursor: pointer; font-family: inherit; }
-    .plan-card .button:disabled { opacity: .75; cursor: default; transform: none; }
-    .plan-card .plan-secondary { background: transparent; color: var(--teal); }
-    .plan-card .plan-secondary:hover { background: var(--mint); }
-    .plan-status { margin: 10px 0 0; color: var(--navy); font-size: 13px; }
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(16px, 3vw, 30px);
+      margin-top: 28px;
+    }
+    .plan-card {
+      --plan-text: #173f46;
+      --plan-accent: #006367;
+      --plan-divider: #add8d2;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-width: 0;
+      padding: clamp(22px, 4vw, 38px);
+      border: 1px solid var(--plan-divider);
+      border-radius: 24px;
+      background: radial-gradient(ellipse at 100% 0%, #a9e9dd 0%, transparent 58%),
+        linear-gradient(155deg, #ebfaf7, #f8fcff 76%);
+      color: var(--plan-text);
+      box-shadow: 0 12px 30px #17535614;
+    }
+    .plan-premium {
+      --plan-text: #e5ebff;
+      --plan-accent: #c6baff;
+      --plan-divider: #7d7cad;
+      background: radial-gradient(ellipse at 100% 0%, #4c3987 0%, transparent 63%),
+        linear-gradient(145deg, #153d58, #262450);
+      box-shadow: 0 15px 32px #24245b30;
+    }
+    .plan-card h3 {
+      margin: 0;
+      color: inherit;
+      font-size: clamp(20px, 2.3vw, 26px);
+      font-weight: 700;
+    }
+    .plan-price {
+      margin: 11px 0 17px;
+      color: var(--plan-accent);
+      font-size: clamp(42px, 7vw, 64px);
+      font-weight: 750;
+      line-height: 1.12;
+      letter-spacing: -.055em;
+    }
+    .plan-card ul {
+      display: grid;
+      gap: 11px;
+      margin: 0 0 27px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--plan-divider);
+      list-style: none;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .plan-card li { display: flex; align-items: baseline; gap: 11px; }
+    .plan-card li::before {
+      content: "";
+      width: 9px;
+      height: 5px;
+      flex: 0 0 auto;
+      border: solid var(--plan-accent);
+      border-width: 0 0 2px 2px;
+      transform: translateY(-2px) rotate(-45deg);
+    }
+    .plan-card .button {
+      width: 100%;
+      min-height: 48px;
+      margin-top: auto;
+      padding: 11px 16px;
+      border: 1px solid transparent;
+      text-align: center;
+      font: 650 14px var(--sans);
+      cursor: pointer;
+    }
+    .plan-card .plan-secondary {
+      border-color: var(--plan-accent);
+      background: #ffffffad;
+      color: var(--plan-accent);
+    }
+    .plan-card .plan-secondary:hover { background: #d9f3ec; }
+    .plan-premium .button { background: #e3dcff; color: #29204e; }
+    .plan-premium .button:not(:disabled):hover { background: #f3efff; }
+    .plan-premium .button:focus-visible { outline-color: #f3efff; }
+    .plan-card .button:disabled { opacity: .78; cursor: default; transform: none; }
+    .plans[data-trial-active="true"] .plan-premium .button:disabled {
+      opacity: 1;
+      background: #c6f0dd;
+      color: #17453e;
+    }
+    .plan-status { margin: 10px 0 0; color: var(--plan-text); font-size: 13px; line-height: 1.5; }
     .plan-status:empty { margin: 0; }
     .plan-note { margin: 14px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
     .health-analysis { margin-top: 15px; padding-top: 12px; border-top: 1px solid var(--line); }
