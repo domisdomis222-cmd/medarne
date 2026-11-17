@@ -293,21 +293,22 @@
     .faq-list p { margin: 0 0 17px; color: var(--muted); font-size: 14px; line-height: 1.65; }
     .faq a, .footer a:not(.brand) { color: var(--teal); text-underline-offset: 3px; }
 
-    .footer { padding-block: 46px 23px; border-top: 1px solid var(--line); background: var(--paper); }
-    .footer-inner { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, .75fr) minmax(0, .95fr) minmax(0, 1.4fr); gap: 28px; }
+    .footer { padding-block: clamp(48px, 6vw, 70px) 28px; border-top: 1px solid var(--line); background: var(--paper); }
+    .footer-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .86fr) minmax(0, 1.2fr); align-items: start; gap: 32px clamp(28px, 5.2vw, 64px); margin-block: 36px; }
     .complaint-form { max-width: none; margin: 0 0 28px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); }
     .complaint-form h2 { margin-bottom: 8px; }
     .complaint-form .login-field { margin-top: 14px; }
     .complaint-form .account-status { margin-top: 8px; }
-    .footer h2 { margin: 0 0 9px; color: var(--navy); font-size: 16px; }
+    .footer h2 { margin: 0 0 14px; color: var(--navy); font-size: 16px; }
     .footer .brand { color: var(--navy); font-size: 22px; }
     .footer .brand-mark { width: 38px; }
     .footer p, .footer ul, .footer-bottom { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
-    .footer p + p { margin-top: 8px; }
+    .footer p + p { margin-top: 11px; }
+    .footer #privatumas { margin-top: 36px; padding: clamp(16px, 2.5vw, 24px); }
     .footer .project-status { display: flex; align-items: center; gap: 7px; margin-top: 12px; }
     .project-status::before { content: ""; width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--teal); }
-    .footer ul { display: grid; gap: 4px; padding: 0; list-style: none; }
-    .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 25px; margin-top: 28px; padding-top: 15px; border-top: 1px solid var(--line); }
+    .footer ul { display: grid; gap: 9px; padding: 0; list-style: none; }
+    .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 28px; margin-top: 34px; padding-top: 21px; border-top: 1px solid var(--line); }
     #privatumas { scroll-margin-top: 22px; }
     #privatumas:target h2 { color: var(--teal); }
 
@@ -480,6 +481,7 @@
     .health-analysis select { margin-left: 5px; padding: 4px; color: var(--navy); background: var(--white); border: 1px solid var(--line); border-radius: 6px; font: inherit; }
     .health-analysis a { color: var(--teal); }
     .footer-creators { flex-basis: 100%; }
+    .footer-creators strong { display: block; margin-bottom: 4px; color: var(--navy); }
     @media (max-width: 540px) {
       .plan-grid { grid-template-columns: minmax(0, 1fr); }
     }
@@ -788,7 +790,7 @@
   </main>
   <footer class="footer">
     <div class="shell">
-<section class="complaint-form" aria-labelledby="complaint-title">
+      <section class="complaint-form" aria-labelledby="complaint-title">
           <h2 id="complaint-title">Nusiskundimai ir pasiūlymai</h2>
           <p>Parašyk, ką norėtum pranešti Medarnės administracijai. Pranešimai viešai nerodomi. Siuntimui reikia <a href="#prisijungimo-maketas">prisijungti</a>.</p>
           <form class="account-form" id="complaint-form">
@@ -829,7 +831,7 @@
         <p>Santrauka sudaroma naršyklėje iš tavo dienoraščio įrašų. Nusiskundimų tekstas, kai jis siunčiamas, saugomas atskirai „Cloud Firestore“ ir viešai nerodomas. Nusiskundimų formoje neprašoma tavo vardo ar el. pašto adreso.</p>
       </section>
       <div class="footer-bottom">
-        <p class="footer-creators"><strong>Kūrėjai:</strong> Domantas Mockaitis, Ainius Cesnulevicius, Urte Ignataviciute.</p>
+        <p class="footer-creators"><strong>Kūrėjai:</strong> Domantas Mockaitis, Ainius Česnulevičius, Urtė Ignatavičiūtė, Dominykas Mickus.</p>
         <span>© Medarnė</span>
         <span>„Medarnės“ informacija nepakeičia gydytojo konsultacijos.</span>
       </div>
