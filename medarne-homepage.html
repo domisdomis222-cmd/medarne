@@ -796,9 +796,7 @@
         specialty.textContent = doctor.specialty;
         const city = document.createElement("p");
         city.textContent = doctor.city;
-        const profileLabel = document.createElement("p");
-        profileLabel.textContent = "Peržiūrėti viešą profilį";
-        info.append(name, specialty, city, profileLabel);
+        info.append(name, specialty, city);
         const register = document.createElement("button");
         register.className = "doctor-register";
         register.type = "button";
