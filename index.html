@@ -730,24 +730,24 @@
           <p><a href="https://github.com/domisdomis222-cmd/medarne/issues">Klausimai ir atsiliepimai per „GitHub“</a></p>
           <p>Šis kanalas viešas. Sveikatos ar paskyros duomenų ten neskelbk.</p>
         </section>
-        <section id="privatumas" aria-labelledby="privacy-title">
-          <h2 id="privacy-title">Privatumas</h2>
-          <p>Paskyrai valdyti naudojamas el. pašto adresas. Kai išsaugai įrašą, jo data, miego trukmė, savijauta, pojūčių aprašymas ir pastabos susiejami su tavo paskyra „Cloud Firestore“.</p>
-          <p>Santrauka sudaroma naršyklėje iš tavo dienoraščio įrašų. Nusiskundimų tekstas, kai jis siunčiamas, saugomas atskirai „Cloud Firestore“ ir viešai nerodomas. Nusiskundimų formoje neprašoma tavo vardo ar el. pašto adreso.</p>
+        <section id="privatumas" aria-labelledby="complaint-title">
+          <h2 id="complaint-title">Nusiskundimai ir pasiūlymai</h2>
+          <p>Parašyk, ką norėtum pranešti Medarnės administracijai. Pranešimai viešai nerodomi. Siuntimui reikia <a href="#prisijungimo-maketas">prisijungti</a>.</p>
+          <form class="account-form" id="complaint-form">
+            <div class="login-field">
+              <label for="complaint-message">Tavo pranešimas</label>
+              <textarea id="complaint-message" name="message" minlength="10" maxlength="3000" required placeholder="Aprašyk nusiskundimą ar pasiūlymą"></textarea>
+            </div>
+            <button class="login-submit" id="send-complaint-button" type="submit">Siųsti administracijai</button>
+          </form>
+          <p class="account-status" id="complaint-status" role="status" aria-live="polite"></p>
+          <p>Įrašomas tik pranešimo tekstas ir pateikimo laikas. Nerašyk čia slaptažodžių ar skubios medicininės pagalbos prašymų.</p>
         </section>
       </div>
-      <section class="complaint-form" aria-labelledby="complaint-title">
-        <h2 id="complaint-title">Nusiskundimai ir pasiūlymai</h2>
-        <p>Parašyk, ką norėtum pranešti Medarnės administracijai. Pranešimai viešai nerodomi. Siuntimui reikia <a href="#prisijungimo-maketas">prisijungti</a>.</p>
-        <form class="account-form" id="complaint-form">
-          <div class="login-field">
-            <label for="complaint-message">Tavo pranešimas</label>
-            <textarea id="complaint-message" name="message" minlength="10" maxlength="3000" required placeholder="Aprašyk nusiskundimą ar pasiūlymą"></textarea>
-          </div>
-          <button class="login-submit" id="send-complaint-button" type="submit">Siųsti administracijai</button>
-        </form>
-        <p class="account-status" id="complaint-status" role="status" aria-live="polite"></p>
-        <p>Įrašomas tik pranešimo tekstas ir pateikimo laikas. Nerašyk čia slaptažodžių ar skubios medicininės pagalbos prašymų.</p>
+      <section class="privacy-copy" aria-labelledby="privacy-title">
+        <h2 id="privacy-title">Privatumas</h2>
+        <p>Paskyrai valdyti naudojamas el. pašto adresas. Kai išsaugai įrašą, jo data, miego trukmė, savijauta, pojūčių aprašymas ir pastabos susiejami su tavo paskyra „Cloud Firestore“.</p>
+        <p>Santrauka sudaroma naršyklėje iš tavo dienoraščio įrašų. Nusiskundimų tekstas, kai jis siunčiamas, saugomas atskirai „Cloud Firestore“ ir viešai nerodomas. Nusiskundimų formoje neprašoma tavo vardo ar el. pašto adreso.</p>
       </section>
       <div class="footer-bottom">
         <p class="footer-creators"><strong>Kūrėjai:</strong> Domantas Mockaitis, Ainius Cesnulevicius, Urte Ignataviciute.</p>
