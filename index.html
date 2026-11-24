@@ -96,6 +96,8 @@
     .doctor-card p { margin: 4px 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
     .doctor-register { min-height: 40px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--green); color: white; font: inherit; font-size: 12px; cursor: pointer; }
     .doctor-register:hover { background: #527765; }
+    .referral-controls [hidden] { display: none !important; }
+    .referral-controls h3 { font: 650 20px var(--sans); }
     .doctor-empty { padding: 16px; color: var(--muted); font-size: 13px; }
     .demo-notice { padding: 12px 14px; background: var(--mint); border-radius: 8px; color: var(--muted); font-size: 11px; line-height: 1.6; }
     @media (max-width: 560px) {
@@ -571,6 +573,15 @@
       <div class="account-panel" id="records-panel" hidden>
         <h2 id="records-title" tabindex="-1">Mano informacija</h2>
         <p id="signed-in-as"></p>
+        <section class="health-summary referral-controls" aria-labelledby="account-referral-title">
+          <h3 id="account-referral-title">Ar turi siuntimą pas gydytoją?</h3>
+          <div class="login-field"><label for="account-referral-status">Siuntimas gydytojo specialisto konsultacijai</label>
+            <select id="account-referral-status"><option value="">Dar nepasirinkta</option><option value="yes">Turiu siuntimą</option><option value="no">Neturiu siuntimo</option></select></div>
+          <div class="login-field" id="account-referral-specialty-field" hidden><label for="account-referral-specialty">Pas kokį specialistą išduotas siuntimas?</label><select id="account-referral-specialty"><option value="">Pasirink specialybę</option><option>Kardiologas</option><option>Dermatologas</option><option>Neurologas</option><option>Endokrinologas</option><option>Psichiatras</option><option value="other">Kita specialybė</option></select></div>
+          <p class="health-caption">Pasirinkimą gali keisti ir gydytojų skiltyje. Informaciją pateiki pats — siuntimo e. sveikatoje netikriname.</p>
+          <button class="history-toggle" id="account-referral-save" type="button">Išsaugoti pasirinkimą</button>
+          <p class="account-status" id="account-referral-message" role="status" aria-live="polite"></p>
+        </section>
         <section class="health-summary" aria-labelledby="health-summary-title">
           <span class="eyebrow">DI demonstracija</span>
           <h3 id="health-summary-title">Tavo būklės santrauka</h3>
@@ -627,6 +638,16 @@
       <h2 id="specialists-title">Rask gydytoją pagal specializaciją</h2>
       <p>Pasirink specializaciją arba įrašyk gydytojo vardą.</p>
       <div class="demo-notice">Viešai skelbiamų gydytojų profilių pavyzdžiai iš „ManoDaktaras.lt“; sąrašas nėra išsamus. Per Medarnę registracija dar neveikia. Profilį ir galimą registraciją patikrinkite paspaudę gydytojo kortelės nuorodą.</div>
+      <section class="health-summary referral-controls" aria-labelledby="directory-referral-title">
+          <h3 id="directory-referral-title">Ar turi siuntimą pas gydytoją?</h3>
+          <div class="login-field"><label for="directory-referral-status">Siuntimas gydytojo specialisto konsultacijai</label>
+            <select id="directory-referral-status"><option value="">Dar nepasirinkta</option><option value="yes">Turiu siuntimą</option><option value="no">Neturiu siuntimo</option></select></div>
+          <div class="login-field" id="directory-referral-specialty-field" hidden><label for="directory-referral-specialty">Pas kokį specialistą išduotas siuntimas?</label><select id="directory-referral-specialty"><option value="">Pasirink specialybę</option><option>Kardiologas</option><option>Dermatologas</option><option>Neurologas</option><option>Endokrinologas</option><option>Psichiatras</option><option value="other">Kita specialybė</option></select></div>
+          <p class="health-caption">Pasirinkimą gali keisti ir gydytojų skiltyje. Informaciją pateiki pats — siuntimo e. sveikatoje netikriname.</p>
+          <button class="history-toggle" id="directory-referral-save" type="button">Išsaugoti pasirinkimą</button>
+          <p class="account-status" id="directory-referral-message" role="status" aria-live="polite"></p>
+        </section>
+      <p class="health-caption" id="referral-filter-note"></p>
       <div class="doctor-filters">
         <label for="specialty-filter">Specializacija
           <select id="specialty-filter">
@@ -899,6 +920,9 @@
       collection,
       getFirestore,
       getDocs,
+      getDoc,
+      doc,
+      setDoc,
       limit,
       orderBy,
       query,
@@ -1147,6 +1171,93 @@
       }
     }
 
+    // A referral is a consultation preference, separate from dated journal entries.
+    const referralControls = ["account-referral", "directory-referral"].map(prefix => ({
+      status: document.getElementById(`${prefix}-status`),
+      specialty: document.getElementById(`${prefix}-specialty`),
+      field: document.getElementById(`${prefix}-specialty-field`),
+      save: document.getElementById(`${prefix}-save`),
+      message: document.getElementById(`${prefix}-message`)
+    }));
+    let referral = { status: "", specialty: "" };
+    let referralRevision = 0;
+    let referralSaving = false;
+    const referralSpecialties = new Set([...referralControls[0].specialty.options].map(option => option.value));
+    const withoutReferralSpecialties = new Set(["Šeimos gydytojas", "Dermatologas", "Psichiatras"]);
+
+    function referralMessage(text, kind = "") {
+      referralControls.forEach(control => setStatus(control.message, text, kind));
+    }
+
+    function syncReferralControls() {
+      for (const control of referralControls) {
+        control.status.value = referral.status;
+        control.specialty.value = referral.specialty;
+        control.field.hidden = referral.status !== "yes";
+        control.specialty.required = referral.status === "yes";
+        control.save.disabled = !currentUser || referralSaving;
+      }
+    }
+
+    async function loadReferral(user) {
+      const revision = referralRevision;
+      try {
+        const snapshot = await getDoc(doc(db, "users", user.uid, "preferences", "referral"));
+        if (currentUser !== user || revision !== referralRevision) return;
+        const data = snapshot.exists() ? snapshot.data() : {};
+        referral = {
+          status: ["yes", "no"].includes(data.status) ? data.status : "",
+          specialty: data.status === "yes" && referralSpecialties.has(data.specialty) ? data.specialty : ""
+        };
+        syncReferralControls();
+        renderSpecialists();
+        referralMessage("");
+      } catch (error) {
+        if (currentUser !== user || revision !== referralRevision) return;
+        referralMessage("Nepavyko įkelti pasirinkimo. Gali pasirinkti iš naujo. " + firebaseMessage(error), "error");
+      }
+    }
+
+    async function saveReferral() {
+      if (!currentUser || referralSaving) return;
+      if (referral.status === "yes" && !referral.specialty) {
+        referralMessage("Pasirink, pas kokį specialistą turi siuntimą.", "error");
+        return;
+      }
+      const user = currentUser;
+      const revision = referralRevision;
+      referralSaving = true;
+      syncReferralControls();
+      referralMessage("Išsaugoma…");
+      try {
+        await setDoc(doc(db, "users", user.uid, "preferences", "referral"), {
+          ...referral, updatedAt: serverTimestamp()
+        });
+        if (currentUser === user && revision === referralRevision) referralMessage("Pasirinkimas išsaugotas.", "success");
+      } catch (error) {
+        if (currentUser === user && revision === referralRevision) referralMessage("Pasirinkimas neišsaugotas. " + firebaseMessage(error), "error");
+      } finally {
+        if (currentUser === user) {
+          referralSaving = false;
+          syncReferralControls();
+        }
+      }
+    }
+
+    referralControls.forEach(control => {
+      const change = () => {
+        referral = { status: control.status.value, specialty: control.status.value === "yes" ? control.specialty.value : "" };
+        referralRevision++;
+        specialtyFilter.value = "";
+        syncReferralControls();
+        renderSpecialists();
+        referralMessage(currentUser ? "Filtras pritaikytas. Išsaugok pasirinkimą kitam apsilankymui." : "Filtras pritaikytas šiam apsilankymui. Prisijunk, jei nori išsaugoti.");
+      };
+      control.status.addEventListener("change", change);
+      control.specialty.addEventListener("change", change);
+      control.save.addEventListener("click", saveReferral);
+    });
+
     const demoDoctors = [
       { name: "Rimvydė Bliūdžiuvienė", specialty: "Šeimos gydytojas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/seimos-gydytojas/rimvyde-bliudziuviene/17109" },
       { name: "Gediminas Burba", specialty: "Šeimos gydytojas", city: "Vilnius", url: "https://www.manodaktaras.lt/gydytojas/seimos-gydytojas/gediminas-burba/13679" },
@@ -1171,10 +1282,19 @@
     function renderSpecialists() {
       const searchTerm = doctorSearch.value.trim().toLocaleLowerCase("lt-LT");
       const selectedSpecialty = specialtyFilter.value;
+      const note = document.getElementById("referral-filter-note");
+      note.textContent = referral.status === "yes"
+        ? (referral.specialty ? "Rodomi siuntime pasirinktos specialybės profiliai. Siuntimas savaime negarantuoja kompensavimo; sąlygas patikrink įstaigoje." : "Pasirink siuntime nurodytą specialybę, kad parodytume gydytojus.")
+        : referral.status === "no"
+          ? "Rodomos specialybės, į kurias tam tikromis sąlygomis galima kreiptis be siuntimo. Šeimos gydytojo ir pirminės psichikos sveikatos paslaugoms svarbus prisirašymas; kompensavimui — įstaigos sutartis su ligonių kasa. Konkretaus profilio sąlygas patikrink įstaigoje."
+          : "Rodomos visos specialybės. Pasirink siuntimo būseną, kad susiaurintum paiešką. Konsultacijos siuntimo ir apmokėjimo sąlygas patikrink įstaigoje.";
       const matches = demoDoctors.filter((doctor) => {
+        const matchesReferral = referral.status === "yes"
+          ? Boolean(referral.specialty) && doctor.specialty === referral.specialty
+          : referral.status === "no" ? withoutReferralSpecialties.has(doctor.specialty) : true;
         const matchesSpecialty = !selectedSpecialty || doctor.specialty === selectedSpecialty;
         const matchesName = !searchTerm || doctor.name.toLocaleLowerCase("lt-LT").includes(searchTerm);
-        return matchesSpecialty && matchesName;
+        return matchesReferral && matchesSpecialty && matchesName;
       });
       doctorList.replaceChildren();
       setStatus(doctorStatus, matches.length ? `Rodoma ${matches.length} demonstracinių profilių.` : "Pagal pasirinktus kriterijus profilių nerasta.");
@@ -1193,7 +1313,11 @@
         specialty.textContent = doctor.specialty;
         const city = document.createElement("p");
         city.textContent = doctor.city;
-        info.append(name, specialty, city);
+        const conditions = document.createElement("p");
+        conditions.textContent = withoutReferralSpecialties.has(doctor.specialty)
+          ? "Be siuntimo — taikomos sąlygos. Kainą ir kompensavimą patikrink įstaigoje."
+          : "Kompensuojamai konsultacijai paprastai reikia siuntimo. Mokamos konsultacijos sąlygas patikrink įstaigoje.";
+        info.append(name, specialty, city, conditions);
         const register = document.createElement("button");
         register.className = "doctor-register";
         register.type = "button";
@@ -1206,6 +1330,8 @@
       }
     }
 
+    syncReferralControls();
+    renderSpecialists();
     doctorSearch.addEventListener("input", renderSpecialists);
     specialtyFilter.addEventListener("change", renderSpecialists);
     document.getElementById("specialists-trigger").addEventListener("click", renderSpecialists);
@@ -1393,6 +1519,12 @@
 
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
+      referralRevision++;
+      referralSaving = false;
+      referral = { status: "", specialty: "" };
+      syncReferralControls();
+      referralMessage("");
+      renderSpecialists();
       journalRecords = [];
       recordsLoadId++;
       renderHealthSummary(null, user ? "Įkeliama santrauka…" : "");
@@ -1405,7 +1537,7 @@
         document.getElementById("signed-in-as").textContent = `Prisijungta kaip ${user.email || "paskyros naudotojas"}.`;
         setAuthMode(false);
         if (window.location.hash === "#prisijungimo-maketas") recordsTitle.focus();
-        await loadRecords(user);
+        await Promise.all([loadRecords(user), loadReferral(user)]);
       } else {
         recordList.replaceChildren();
         setStatus(recordStatus, "");
@@ -1414,3 +1546,4 @@
   </script>
 </body>
 </html>
+
