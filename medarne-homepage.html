@@ -613,6 +613,9 @@
     .ai-usage-bar p { margin:0; color:var(--muted); }
     .ai-usage-bar a { color:var(--teal); font-weight:600; }
     .ai-usage-bar [hidden] { display:none; }
+    #ai-attach-label[aria-disabled="true"] { opacity:.65; cursor:not-allowed; }
+    .ai-suggestions button:disabled { opacity:.6; cursor:not-allowed; }
+    #info-files-premium-note[hidden], #ai-files-premium-note[hidden] { display:none; }
   </style>
 </head>
 <body>
@@ -672,8 +675,9 @@
         <h2 id="records-title" tabindex="-1">Mano informacija</h2>
         <p id="signed-in-as"></p>
         <section class="health-summary" aria-labelledby="info-files-title">
-          <h3 id="info-files-title">Priedai DI pokalbiui</h3>
-          <div class="login-field"><label for="info-files">Prisegti dokumentus ar nuotraukas</label><input id="info-files" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,text/plain" multiple></div>
+          <h3 id="info-files-title">Priedai DI pokalbiui · Premium</h3>
+          <p id="info-files-premium-note" class="health-caption">Dokumentų ir nuotraukų analizė įtraukta į „Premium“. <a href="#planai" data-files-upgrade>Išbandyti 7 dienas</a></p>
+          <div class="login-field"><label for="info-files">Prisegti dokumentus ar nuotraukas</label><input id="info-files" type="file" disabled aria-describedby="info-files-premium-note" accept="application/pdf,image/jpeg,image/png,image/webp,text/plain" multiple></div>
           <p class="health-caption">PDF, JPG, PNG, WEBP arba TXT. Iki 3 failų, kiekvienas iki 5 MB, iš viso iki 10 MB. Priedai laikomi tik šiame puslapyje — jį perkrovus ar atsijungus reikės prisegti iš naujo.</p>
           <ul id="info-files-list" class="record-list" aria-label="Prisegti failai"></ul>
           <p id="info-files-status" class="account-status" role="status"></p>
@@ -781,9 +785,10 @@
       <span class="eyebrow">Pokalbio kontekstas</span><h3>Tavo informacija,<br>vienoje vietoje.</h3>
       <p>Pastebėk įrašų pokyčius, suprask dokumentus ir pasiruošk vizitui.</p>
       <div class="ai-source"><span aria-hidden="true">↗</span><div><strong>Savijautos dienoraštis</strong><small>Simptomai, miegas ir pastabos</small></div></div>
-      <div class="ai-source"><span aria-hidden="true">+</span><div><strong>Tavo priedai</strong><small>PDF, nuotraukos ir tekstas</small></div></div>
+      <div class="ai-source"><span aria-hidden="true">+</span><div><strong>Tavo priedai · Premium</strong><small>PDF, nuotraukos ir tekstas</small></div></div>
       <div id="ai-chat-files" class="ai-chat-files" aria-label="Pokalbio priedai"></div>
-      <label class="ai-attach-label" for="ai-chat-file-input">＋ Prisegti failą</label><input class="ai-visually-hidden" id="ai-chat-file-input" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.txt" multiple>
+      <label class="ai-attach-label" for="ai-chat-file-input" id="ai-attach-label">＋ Prisegti failą · Premium</label><input class="ai-visually-hidden" id="ai-chat-file-input" type="file" disabled aria-describedby="ai-files-premium-note" accept=".pdf,.jpg,.jpeg,.png,.webp,.txt" multiple>
+      <p id="ai-files-premium-note" class="health-caption">Priedų analizė — „Premium“ funkcija. <a href="#planai" data-files-upgrade>Išbandyti „Premium“</a></p>
       <p id="ai-chat-file-status" class="account-status" role="status"></p>
       <small>Iki 3 failų. Po 5 MB, iki 10 MB iš viso. Priedai laikomi tik iki puslapio perkrovimo.</small>
     <label class="ai-records-choice"><input id="ai-include-records" type="checkbox" checked> Įtraukti dienoraščio įrašus</label>
@@ -792,7 +797,7 @@
     </aside><section class="ai-chat-main" aria-label="Pokalbis su Medarnės DI">
       <p id="ai-advisor-sign-in">Norėdamas pradėti, <a id="ai-chat-login" href="#prisijungimo-maketas">prisijunk prie savo paskyros</a>.</p>
       <div class="ai-chat-feed" id="ai-chat-feed">
-        <div class="ai-chat-welcome" id="ai-chat-welcome"><span class="ai-welcome-symbol" aria-hidden="true">✦</span><h3>Nuo ko pradėsime?</h3><p>Paklausk apie savo savijautą arba prisegtą dokumentą.</p><div class="ai-suggestions"><button type="button" data-ai-question="Apibendrink mano savijautos įrašus ir nurodyk jų datas.">Apibendrinti įrašus <span>↗</span></button><button type="button" data-ai-question="Paaiškink mano prisegto dokumento terminus paprastais žodžiais. Jei dokumento nėra, paprašyk jį prisegti.">Paaiškinti dokumentą <span>↗</span></button><button type="button" data-ai-question="Pagal mano įrašus padėk sudaryti klausimų gydytojui sąrašą.">Pasiruošti vizitui <span>↗</span></button></div></div>
+        <div class="ai-chat-welcome" id="ai-chat-welcome"><span class="ai-welcome-symbol" aria-hidden="true">✦</span><h3>Nuo ko pradėsime?</h3><p>Paklausk apie savo savijautą arba prisegtą dokumentą.</p><div class="ai-suggestions"><button type="button" data-ai-question="Apibendrink mano savijautos įrašus ir nurodyk jų datas.">Apibendrinti įrašus <span>↗</span></button><button type="button" id="ai-document-suggestion" data-ai-question="Paaiškink mano prisegto dokumento terminus paprastais žodžiais. Jei dokumento nėra, paprašyk jį prisegti.">Paaiškinti dokumentą <span>↗</span></button><button type="button" data-ai-question="Pagal mano įrašus padėk sudaryti klausimų gydytojui sąrašą.">Pasiruošti vizitui <span>↗</span></button></div></div>
         <div id="ai-chat-messages" class="ai-chat-messages" role="log" aria-live="polite" aria-label="DI pokalbio žinutės"></div>
       </div>
       <div class="ai-chat-composer">
@@ -906,12 +911,11 @@
           <div class="plan-heading"><h3>Nemokamas</h3><span class="plan-tag">Pradžiai</span></div>
           <p class="plan-description">Susipažink su savo savijautos įrašais.</p>
           <p class="plan-price">0 €<span> / mėn.</span></p>
-          <div class="plan-ai-benefit"><strong>5 DI žinutės per dieną</strong><span>Klausimams apie tavo įrašus ir priedus.</span></div>
+          <div class="plan-ai-benefit"><strong>5 DI žinutės per dieną</strong><span>Klausimams apie tavo dienoraščio įrašus.</span></div>
           <ul>
             <li>Sveikatos dienoraštis</li>
             <li>Naujausio įrašo santrauka</li>
             <li>7 dienų savijautos analizė</li>
-            <li>PDF, nuotraukų ir teksto priedai DI pokalbyje</li>
             <li>Gydytojų paieška ir siuntimo filtras</li>
           </ul>
           <a class="button plan-secondary" href="#prisijungimo-maketas">Pradėti nemokamai</a>
@@ -923,10 +927,9 @@
           <div class="plan-ai-benefit"><strong><span aria-hidden="true">∞</span> Neribotos DI žinutės</strong><span>Tęsk pokalbį be nemokamo plano dienos limito.</span></div>
           <ul>
             <li>Visos nemokamo plano funkcijos</li>
-            <li>Neribotas DI klausimų skaičius</li>
+            <li>PDF ir tekstinių dokumentų analizė su DI</li>
+            <li>Nuotraukų aptarimas su DI</li>
             <li>30 dienų dienoraščio analizė</li>
-            <li>7 ir 30 dienų laikotarpių palyginimas perjungiant rodinį</li>
-            <li>7 dienos išbandyti „Premium“ galimybes</li>
           </ul>
           <button class="button" id="start-premium-trial" type="button" disabled>Išbandyti nemokamai 7 dienas <span aria-hidden="true">↗</span></button>
           <p class="plan-status" id="premium-trial-status" aria-live="polite"></p>
@@ -939,7 +942,7 @@
       <div class="faq-list">
         <details>
           <summary>Ar programėlė nemokama?</summary>
-          <p>Nemokamas planas suteikia 5 DI žinutes per dieną, o „Premium“ už 1,29 €/mėn. — neribotas DI žinutes ir 30 dienų analizę. „Premium“ galima 7 dienas išbandyti nemokamai. <a href="#planai">Peržiūrėti planus</a>.</p>
+          <p>Nemokamas planas suteikia 5 DI žinutes per dieną, o „Premium“ už 1,29 €/mėn. — neribotas DI žinutes, dokumentų bei nuotraukų analizę ir 30 dienų dienoraščio analizę. „Premium“ galima 7 dienas išbandyti nemokamai. <a href="#planai">Peržiūrėti planus</a>.</p>
         </details>
         <details>
           <summary>Ar DI nustato diagnozes?</summary>
@@ -1582,6 +1585,11 @@
     }
 
     function attachAiFiles(input) {
+      if (!hasPremiumAi()) {
+        input.value = "";
+        setAiFileStatus("PDF, nuotraukų ir teksto priedai prieinami su „Premium“. Išbandyk 7 dienas nemokamai.", "error");
+        return;
+      }
       const incoming = [...input.files];
       const combined = [...aiAttachments, ...incoming];
       input.value = "";
@@ -1639,7 +1647,7 @@
       const user = currentUser;
       const epoch = aiEpoch;
       const active = () => epoch === aiEpoch && currentUser === user && aiAdvisorConsent.checked;
-      const attachments = [...aiAttachments];
+      const attachments = hasPremiumAi() ? [...aiAttachments] : [];
       const referralSnapshot = { ...referral };
       aiAdvisorBusy = true;
       aiAdvisorButton.disabled = true;
@@ -1699,6 +1707,26 @@
         }
       }
     });
+
+    function syncPremiumFileAccess() {
+      const premium = hasPremiumAi();
+      infoFiles.disabled = !premium;
+      aiChatFileInput.disabled = !premium;
+      document.getElementById("info-files-premium-note").hidden = premium;
+      document.getElementById("ai-files-premium-note").hidden = premium;
+      document.getElementById("ai-attach-label").setAttribute("aria-disabled", String(!premium));
+      const suggestion = document.getElementById("ai-document-suggestion");
+      suggestion.disabled = !premium;
+      suggestion.title = premium ? "" : "Dokumentų analizė prieinama su Premium";
+      // Expiry invalidates pending requests and any conversation derived from files.
+      if (!premium && aiAttachments.length) {
+        resetAiChat(true);
+        setAiFileStatus("Priedų analizė neaktyvi. Įjungus „Premium“, failus reikės prisegti iš naujo.");
+      }
+    }
+    planSection.addEventListener("trialchange", syncPremiumFileAccess);
+    document.querySelectorAll("[data-files-upgrade]").forEach(link => link.addEventListener("click", () => aiChatDialog.close()));
+    syncPremiumFileAccess();
 
     function appendRecord(record) {
       const item = document.createElement("li");
@@ -2126,6 +2154,7 @@
   </script>
 </body>
 </html>
+
 
 
 
