@@ -1360,6 +1360,14 @@
     function aiFailure(error, stage) {
       const description = String(error.message || "").toLowerCase();
       const code = String(error.code || "").toLowerCase();
+      const customErrorData = error.customErrorData || {};
+      const responseStatus = Number.isInteger(customErrorData.status) && customErrorData.status >= 100 && customErrorData.status <= 599
+        ? customErrorData.status
+        : null;
+      const rawReason = Array.isArray(customErrorData.errorDetails)
+        ? customErrorData.errorDetails.find(detail => typeof detail?.reason === "string")?.reason || ""
+        : "";
+      const safeReason = /^[a-z0-9_-]{1,64}$/i.test(rawReason) ? rawReason.toUpperCase() : "";
       let message;
       if (code === "ai/daily-limit") message = "Šiandien išnaudojai 5 nemokamas DI žinutes. Grįžk rytoj arba išbandyk „Premium“ be šio limito.";
       else if (code === "ai/usage-unavailable") message = "Nepavyko pasiekti žinučių skaitiklio. Leisk šios svetainės vietinę saugyklą ir bandyk dar kartą.";
@@ -1367,17 +1375,20 @@
       else if (error.message === "context-too-large") message = "Įrašų per daug vienai užklausai. Jie nenusiųsti. Gali išjungti dienoraščio įtraukimą ir aptarti tik prisegtus failus.";
       else if (stage === "records") message = "Nepavyko įkelti dienoraščio įrašų. Patikrink prisijungimą. Jei nori aptarti tik failą, nuimk „Įtraukti dienoraščio įrašus“ ir siųsk dar kartą.";
       else if (stage === "files" || error.message === "file-read") message = "Nepavyko perskaityti priedo. Pašalink jį ir prisek iš naujo. Patikrink, ar failas atsidaro tavo įrenginyje.";
-      else if (/app.?check|attestation|recaptcha/.test(code + description)) message = "Nepavyko patvirtinti saugaus ryšio su DI. Svetainės kūrėjui reikia patikrinti App Check raktą ir leidžiamą domeną.";
-      else if (/429|quota|resource-exhausted/.test(code + description)) message = "Pasiektas DI paslaugos užklausų limitas. Pabandyk vėliau.";
-      else if (/404|not-found|not found/.test(code + description)) message = "Pasirinktas DI modelis nepasiekiamas. Svetainės kūrėjui reikia patikrinti modelio nustatymą.";
-      else if (/403|permission|api.*disabled|api.*enabled/.test(code + description)) message = "DI paslauga atmetė užklausą. Svetainės kūrėjui reikia patikrinti AI Logic įjungimą ir App Check nustatymus.";
+      else if (/app.?check|attestation|recaptcha/.test(code + description) || responseStatus === 401) message = "Nepavyko patvirtinti saugaus ryšio su DI. Svetainės kūrėjui reikia patikrinti App Check raktą ir leidžiamą domeną.";
+      else if (responseStatus === 429 || /429|quota|resource-exhausted/.test(code + description)) message = "Pasiektas DI paslaugos užklausų limitas. Pabandyk vėliau.";
+      else if (responseStatus === 404 || /404|not-found|not found/.test(code + description)) message = "Pasirinktas DI modelis nepasiekiamas. Svetainės kūrėjui reikia patikrinti modelio nustatymą.";
+      else if (responseStatus === 403 || /403|permission|api.*disabled|api.*enabled/.test(code + description)) message = "DI paslauga atmetė užklausą. Svetainės kūrėjui reikia patikrinti AI Logic įjungimą ir App Check nustatymus.";
       else if (/network|fetch|offline|timeout/.test(code + description)) message = "Nepavyko susisiekti su DI paslauga. Patikrink interneto ryšį ir bandyk dar kartą.";
       else if (error.message === "empty-response") message = "DI negrąžino teksto. Pabandyk klausimą suformuluoti kitaip arba patikrink, ar priedas įskaitomas.";
       else message = "DI užklausa nepavyko. Žinutė ir priedai liko šiame puslapyje. Bandyk dar kartą arba perduok klaidos kodą svetainės kūrėjui.";
       const safeCode = /^[a-z0-9/_-]{1,80}$/i.test(code) ? code : "unknown";
-      const status = /(400|401|403|404|413|429|500|503)/.exec(description)?.[1];
-      document.getElementById("ai-error-details").hidden = false;
-      document.getElementById("ai-error-code").textContent = `Etapas: ${stage}; kodas: ${safeCode}${status ? "; HTTP " + status : ""}.`;
+      const diagnostics = [`Etapas: ${stage}`, `kodas: ${safeCode}`];
+      if (responseStatus !== null) diagnostics.push(`HTTP ${responseStatus}`);
+      if (safeReason) diagnostics.push(`priežastis: ${safeReason}`);
+      const details = document.getElementById("ai-error-details");
+      details.hidden = false;
+      document.getElementById("ai-error-code").textContent = diagnostics.join("; ") + ".";
       return message;
     }
 
