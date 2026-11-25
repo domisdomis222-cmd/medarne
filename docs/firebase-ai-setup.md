@@ -4,7 +4,7 @@ The homepage initializes Firebase AI Logic with Gemini and App Check. Chat, atta
 
 ## Configure the existing Firebase project
 
-1. Open the Firebase console and select the existing project `medarne-d710a`.
+1. Open the Firebase console and select the existing project `medarne`.
 2. Complete Firebase AI Logic setup for the Gemini Developer API. Ensure the selected model `gemini-4-hydrogen` is available to the project.
 3. Under Security > App Check, register the existing web app with reCAPTCHA Enterprise. The public app ID is already present in firebaseConfig in both HTML files. Configure the actual website domain in the reCAPTCHA key's allowed domains.
 4. Copy the public reCAPTCHA Enterprise site key used for that registration. In BOTH `index.html` and `medarne-homepage.html`, set:
@@ -34,4 +34,4 @@ Official documentation:
 - https://firebase.google.com/docs/ai-logic/app-check
 - https://firebase.google.com/docs/app-check/web/recaptcha-enterprise-provider
 
-The frontend now uses the web configuration supplied for project `medarne-d710a`. Configure Email/Password Authentication, the website's authorized domain, Firestore with owner-only access rules, AI Logic and App Check in that same project before testing. Changing frontend configuration does not migrate users or records from the previously referenced project. The optional Analytics measurementId is omitted because this page does not initialize Analytics.
+The frontend now uses the web configuration supplied for project `medarne`. Configure Email/Password Authentication, the website's authorized domain, Firestore with owner-only access rules, AI Logic and App Check in that same project before testing. Changing frontend configuration does not migrate users or records from the previously referenced project. The optional Analytics measurementId is omitted because this page does not initialize Analytics.
